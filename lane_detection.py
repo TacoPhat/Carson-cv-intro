@@ -14,16 +14,24 @@ def detect_lines(img1, threshold1, threshold2, apertureSize, minLineLength, maxL
     return lines
 
 def draw_lines(img2, lines):
-    img = cv2.imread(img2)
+    # Check if img2 is a string (file path), or already an image array
+    if isinstance(img2, str):
+        img = cv2.imread(img2)
+    else:
+        img = img2.copy()
     for line in lines:
-        x1, y1, x2, y2 = line[0]
+        if isinstance(line, np.ndarray):
+            x1, y1, x2, y2 = line[0]
+        else:
+            (x1, y1), (x2, y2) = line
         color = (
-            random.randint(50, 255),  # Red
-            random.randint(50, 255),  # Green
-            random.randint(50, 255)   # Blue
+            random.randint(50, 255),
+            random.randint(50, 255),
+            random.randint(50, 255)
         )
-        cv2.line(img, (x1, y1), (x2, y2), (color[0], color[1], color[2]), 5)
+        cv2.line(img, (int(x1), int(y1)), (int(x2), int(y2)), color, 5)
     return img
+
 
 def get_slopes_intercepts(lines):
     slope_list = []
